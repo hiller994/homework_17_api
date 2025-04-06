@@ -14,7 +14,7 @@ def create_user_for_edit():
     })
     body = response.json()
     id_user_for_edit = body["id"]
-    return id_user_for_edit
+    yield id_user_for_edit
 
 @pytest.fixture(scope='function')
 def create_user_for_delete():
@@ -24,7 +24,7 @@ def create_user_for_delete():
     })
     body = response.json()
     id_user_for_delete = body["id"]
-    return id_user_for_delete
+    yield id_user_for_delete
 
 def test_get_view_list_users():
     response = requests.get(
