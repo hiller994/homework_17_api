@@ -1,9 +1,30 @@
 import json
+
+import pytest
 import requests
 from jsonschema import validate
 
 from homework_17.data.file_path import path
 
+@pytest.fixture(scope='function')
+def create_user_for_edit():
+    response = requests.post("https://reqres.in/api/users", data={
+        "name": "Andreyforedit",
+        "job": "tester"
+    })
+    body = response.json()
+    id_user_for_edit = body["id"]
+    return id_user_for_edit
+
+@pytest.fixture(scope='function')
+def create_user_for_delete():
+    response = requests.post("https://reqres.in/api/users", data={
+        "name": "Andreyfordelete",
+        "job": "tester"
+    })
+    body = response.json()
+    id_user_for_delete = body["id"]
+    return id_user_for_delete
 
 def test_get_view_list_users():
     response = requests.get(
@@ -33,12 +54,11 @@ def test_post_create_user():
 
 
 
-def test_put_editing_user():
+def test_put_editing_user(create_user_for_edit):
     job = "tester"
     name = "Andrey"
-    user_id = "2"
 
-    response = requests.put(f"https://reqres.in/api/users/{user_id}", data={
+    response = requests.put(f"https://reqres.in/api/users/{create_user_for_edit}", data={
         "name": name,
         "job": job
     })
@@ -51,22 +71,15 @@ def test_put_editing_user():
 
 
 
-def test_delete_user():
-    user_id = "2"
+def test_delete_user(create_user_for_delete):
 
-    response = requests.delete(f"https://reqres.in/api/users/{user_id}", data={
-        "name": "Andrey",
-        "job": "tester"
-    })
+    response = requests.delete(f"https://reqres.in/api/users/{create_user_for_delete}")
     assert response.status_code == 204
 
 def test_get_user_not_found():
     user_id = "1234"
 
-    response = requests.get(f"https://reqres.in/api/users/{user_id}", data={
-        "name": "Andrey",
-        "job": "tester"
-    })
+    response = requests.get(f"https://reqres.in/api/users/{user_id}")
     assert response.status_code == 404
 
 def test_post_registration_user():
